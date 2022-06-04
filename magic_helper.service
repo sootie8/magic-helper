@@ -6,6 +6,6 @@ Wants=network-online.target
 Type=simple
 User=root
 ExecStart=/bin/bash /opt/magic-helper/magic-helper.sh
-
+StandardOutput=null
 [Install]
 WantedBy=multi-user.target

@@ -8,7 +8,8 @@ target_subnet="192.168.0.255";
 target_mac="64:00:6a:2a:1d:02";
 mg_log="/var/log/magic-helper.log";
 wake_time=15;
-wol_interface=$(ip link | grep -o "en[^:]*:" | head -c-2);
+#wol_interface=$(ip link | grep -o "en[^:]*:" | head -c-2);
+wol_interface="eth0";
 while :
 do
 	#ping check if 102 is online.
