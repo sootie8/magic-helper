@@ -1,0 +1,11 @@
+[Unit]
+Description=Starts Magic Helper
+After=network-online.target
+Wants=network-online.target
+[Service]
+Type=simple
+User=root
+ExecStart=/bin/bash /opt/magic-helper/magic-helper.sh
+
+[Install]
+WantedBy=multi-user.target
