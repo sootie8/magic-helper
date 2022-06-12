@@ -1,6 +1,6 @@
 #!/bin/bash
 #deps etherwake tcpump
-
+sleep 300;
 sleep_timeout=60;
 missed_tar=5;
 ip_addr="192.168.0.102";
@@ -14,20 +14,28 @@ while :
 do
 	#ping check if 102 is online.
 	#if yes sleep, loop.
-	ret=0;
-	while [ $ret -eq 0 ] 
+	back=1;
+	last_arp_time=2;
+	while [ $last_arp_time -gt $back ]
 	do	
-		ping $ip_addr -c 1 -W 1;
-		ret=$?;
-		sleep 5;
 		echo $(date -u) " " "target machine is up" | tee -a $mg_log;
+		sleep 30;	
+		back=$(date '+%s' --date='60 seconds ago');
+		last_arp_time=$(tail -n 1 /var/log/log-last-arp.log);
 	done
 	echo $(date -u) " " "target machine is down" | tee -a $mg_log;
 	#if not sleep timeout.
 	sleep $sleep_timeout;
 	#if arp requests from anywhere -> login
-	echo $(date -u) " " "wating for arp" | tee -a $mg_log;
-	tcpdump 'arp and dst 192.168.0.102' -c 2 -l | tee -a $mg_log;
+	back=2;
+	last_arp_time=1;
+	while [ $last_arp_time -lt $back ]
+	do
+		echo $(date -u) " " "wating for arp" | tee -a $mg_log;
+		sleep 1;			
+		back=$(date '+%s' --date='60 seconds ago');
+		last_arp_time=$(tail -n 1 /var/log/log-last-arp.log);
+	done
 	#send wol
 	echo $(date -u) " " "arp sniffed, sending WOL" | tee -a $mg_log;
 	etherwake -i $wol_interface $target_mac -b $target_subnet;			
